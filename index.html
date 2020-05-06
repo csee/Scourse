@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Shang's Design Core Course</title>
+		<meta name="description" content="Animating SVG text on a path on scroll using the Intersection Observer API and SVG filters." />
+		<meta name="keywords" content="svg text, animation, scroll, svg filter, Intersection Observer" />
+		<meta name="author" content="Codrops" />
+		<link rel="shortcut icon" href="favicon.ico">
+		<link rel="stylesheet" href="https://use.typekit.net/rhw1vur.css">
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+		<script>document.documentElement.className="js";var supportsCssVars=function(){var e,t=document.createElement("style");return t.innerHTML="root: { --tmp-var: bold; }",document.head.appendChild(t),e=!!(window.CSS&&window.CSS.supports&&window.CSS.supports("font-weight","var(--tmp-var)")),t.parentNode.removeChild(t),e};supportsCssVars()||alert("Please view this demo in a modern browser that supports CSS Variables.");</script>
+		<!--script src="//tympanus.net/codrops/adpacks/analytics.js"></script-->
+	</head>
+	<body class="loading">
+		<svg class="hidden">
+			<defs>
+				<filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+					<feGaussianBlur stdDeviation="0" result="blur" data-min-deviation="0" data-max-deviation="10"/>
+					<feMerge>
+						<feMergeNode in="blur"/>
+					</feMerge>
+				</filter>
+				<filter id="blur2" x="-30%" y="-30%" width="160%" height="160%">
+					<feGaussianBlur in="SourceAlpha" stdDeviation="0" result="glow" data-min-deviation="0" data-max-deviation="30"/>
+					<feColorMatrix result="bluralpha" type="matrix" values="0 -1 0 0 0 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1.8 0 "/>
+					<feOffset in="bluralpha" dx="0.000000" dy="0.000000" result="offsetBlur"/>
+					<feMerge>
+						<feMergeNode in="offsetBlur"/>
+						<feMergeNode in="SourceGraphic"/>
+					</feMerge>
+				</filter>
+				<filter id="distortionFilter">
+					<feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="2" seed="2" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="noise"/>
+					<feDisplacementMap in="SourceGraphic" in2="noise" scale="0" data-min-scale="0" data-max-scale="100" xChannelSelector="R" yChannelSelector="B" x="0%" y="0%" width="100%" height="100%" filterUnits="userSpaceOnUse"/>
+				</filter>
+				<filter id="distortionFilter2">
+					<feGaussianBlur stdDeviation="10" result="glow"/>
+					<feTurbulence type="fractalNoise" baseFrequency="0 0.1" numOctaves="2" seed="2" stitchTiles="noStitch" x="-30%" y="-30%" width="160%" height="160%" result="noise"/>
+					<feDisplacementMap in="SourceGraphic" in2="noise" scale="0" data-min-scale="0" data-max-scale="50" xChannelSelector="R" yChannelSelector="B" x="-30%" y="-30%" width="160%" height="160%" filterUnits="userSpaceOnUse" result="displacement"/>
+					<feMerge>
+						<feMergeNode in="glow"/>
+						<feMergeNode in="displacement"/>
+					</feMerge>
+				</filter>
+			</defs>
+		</svg>
+		<main>
+			<div class="frame frame--screen">
+				<!-- <div class="frame__title-wrap">
+					<h1 class="frame__title">Animating SVG Text on a Path</h1>
+					<div class="frame__links">
+						<a href="https://tympanus.net/Development/AudioBasedImageDistortion/">Previous Demo</a>
+						<a href="https://tympanus.net/codrops/?p=47831">Article</a>
+						<a href="https://github.com/codrops/AnimateSVGTextPathScroll/">GitHub</a>
+					</div>
+				</div> -->
+				<h2 class="frame__heading">Shang's Design Core Course</h2>
+				<div class="frame__counter">
+					<span class="frame__counter-number">06</span>
+					<span class="frame__counter-text">months</span>
+					<span class="frame__counter-number">04</span>
+					<span class="frame__counter-text">days left</span>
+				</div>
+				<!-- <nav class="frame__links frame__links--header">
+					<a href="#">Updates</a>
+					<a href="#">About</a>
+					<a href="#">Careers</a>
+				</nav> -->
+			</div>
+			<header class="intro">
+				<h1 class="intro__title">Learning</h1>
+				<p class="intro__hint">Discover Course</p>
+			</header>
+			<div class="grid">
+				<div class="grid__item">
+					<span class="grid__item-number">01</span>
+					<img class="grid__item-img" src="img/1.jpg" alt="Some image" />
+					<h3 class="grid__item-title">Typography</h3>
+					<p class="grid__item-description">Typography is the art and technique of arranging type to make written language legible, readable, and appealing when displayed. The arrangement of type involves selecting typefaces, point sizes, line lengths, line-spacing, and letter-spacing, and adjusting the space between pairs of letters.</p>
+				</div>
+				<div class="grid__item">
+					<span class="grid__item-number">02</span>
+					<img class="grid__item-img" src="img/2.jpg" alt="Some image" />
+					<h3 class="grid__item-title">Color</h3>
+					<p class="grid__item-description">There are few things in design that are more subjective—or more important—than the use of color. A color that can evoke one reaction in one person may evoke the opposite reaction in another, due to culture, prior association, or even just personal preference.</p>
+				</div>
+			</div>
+			<svg class="svgtext svgtext--1" data-filter-type="blur" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+				<path id="text-curve1" d="M 0 100 Q 250 200 500 100 Q 750 0 1000 100" fill="none"/>
+				<text filter="url(#blur)">
+					<textPath href="#text-curve1">
+						You may think I’m small, but I have a universe inside my mind.
+					</textPath>
+				</text>
+			</svg>
+			<svg class="svgtext" data-filter-type="blur" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+				<path id="text-curve11" d="M 0 100 Q 250 0 500 100 Q 750 200 1000 100" fill="none"/>
+				<text filter="url(#blur2)">
+					<textPath href="#text-curve11">
+						Don't forget about the stardust. Don't forget about the quartz rocks in the woods.
+					</textPath>
+				</text>
+			</svg>
+			<div class="grid">
+				<div class="grid__item">
+					<span class="grid__item-number">03</span>
+					<img class="grid__item-img" src="img/3.jpg" alt="Some image" />
+					<h3 class="grid__item-title">Grid</h3>
+					<p class="grid__item-description">The 960 Grid System is an effort to streamline web development workflow by providing commonly used dimensions, based on a width of 960 pixels. There are two variants: 12 and 16 columns, which can be used separately or in tandem.</p>
+				</div>
+				<div class="grid__item">
+					<span class="grid__item-number">04</span>
+					<img class="grid__item-img" src="img/4.jpg" alt="Some image" />
+					<h3 class="grid__item-title">Scale</h3>
+					<p class="grid__item-description">This principle is commonly used: almost every good visual design takes advantage of it. The principle of scale refers to using relative size to signal importance and rank in a composition.</p>
+				</div>
+			</div>
+			<img class="bigimg" src="img/big1.jpg" alt="Some image" />
+			<svg class="svgtext svgtext--2" data-filter-type="distortion" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+				<path id="text-curve2" d="M 0 50 Q 100 0 200 100 Q 300 200 650 50 C 750 0 750 150 1000 50" fill="none"/>
+				<text filter="url(#distortionFilter)">
+					<textPath href="#text-curve2">
+					Dwell on the beauty of life. Watch the stars.
+					</textPath>
+				</text>
+			</svg>
+			<svg class="svgtext" data-filter-type="distortion" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 300">
+				<path id="text-curve22" d="M 0 200 Q 150 300 300 200 Q 700 0 1000 150" fill="none"/>
+				<text filter="url(#distortionFilter2)">
+					<textPath href="#text-curve22">
+					The cosmos is within us. We are made of star-stuff.
+					</textPath>
+				</text>
+			</svg>
+			<div class="grid">
+				<div class="grid__item">
+					<span class="grid__item-number">05</span>
+					<img class="grid__item-img" src="img/5.jpg" alt="Some image" />
+					<h3 class="grid__item-title">Visual Hierarchy</h3>
+					<p class="grid__item-description">A layout with a good visual hierarchy will be easily understood by your users. The principle of visual hierarchy refers to guiding the eye on the page so that it attends to different design elements in the order of their importance. </p>
+				</div>
+				<div class="grid__item">
+					<span class="grid__item-number">06</span>
+					<img class="grid__item-img" src="img/6.jpg" alt="Some image" />
+					<h3 class="grid__item-title">Balance</h3>
+					<p class="grid__item-description">Balance is like a seesaw: instead of weight, you are balancing design elements. The principle of balance refers to a satisfying arrangement or proportion of design elements. Balance occurs when there is an equally distributed (but not necessarily symmetrical) amount of visual signal on both sides of an imaginary axis going through the middle of the screen. This axis is often vertical but can also be horizontal.</p>
+				</div>
+			</div>
+			<svg class="svgtext svgtext--3" data-filter-type="blur" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+				<path id="text-curve3" d="M 0 150 Q 200 50 500 50 Q 800 50 1000 150 " fill="none"/>
+				<text filter="url(#blur)">
+					<textPath href="#text-curve3">
+					When it is dark enough, you can see the stars.
+					</textPath>
+				</text>
+			</svg>
+			<svg class="svgtext svgtext--3" data-filter-type="blur" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+				<path id="text-curve4" d="M 0 150 Q 200 50 500 50 Q 800 50 1000 150 " fill="none"/>
+				<text filter="url(#blur)">
+					<textPath href="#text-curve4">
+					It is not the man who has too little, but the man who craves more, that is poor.
+					</textPath>
+				</text>
+			</svg>
+			<svg class="svgtext svgtext--3" data-filter-type="blur" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+				<path id="text-curve5" d="M 0 150 Q 200 50 500 50 Q 800 50 1000 150 " fill="none"/>
+				<text filter="url(#blur)">
+					<textPath href="#text-curve5">
+					Live by love though the stars walk backward.
+					</textPath>
+				</text>
+			</svg>
+			<img class="bigimg" src="img/big2.jpg" alt="Some image" />
+			<div class="grid-wrap">
+				<svg class="svgtext svgtext--4" data-filter-type="blur" width="120%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 200">
+					<path id="textcircle" d="M 0 0 Q 200 150 500 150 Q 850 150 1000 0 " fill="none"/>
+					<text filter="url(#blur)">
+						<textPath href="#textcircle">
+						Yours is the light by which my spirit's born: you are my sun, my moon, and all my stars.
+						</textPath>
+					</text>
+				</svg>
+				<div class="grid">
+					<div class="grid__item">
+						<span class="grid__item-number">07</span>
+						<img class="grid__item-img" src="img/7.jpg" alt="Some image" />
+						<h3 class="grid__item-title">Contrast</h3>
+						<p class="grid__item-description">This is another commonly used principle that makes certain parts of your design stand out to your users. The principle of contrast refers to the juxtaposition of visually dissimilar elements in order to convey the fact that these elements are different (e.g., belong in different categories, have different functions, behave differently). </p>
+					</div>
+					<div class="grid__item">
+						<span class="grid__item-number">08</span>
+						<img class="grid__item-img" src="img/8.jpg" alt="Some image" />
+						<h3 class="grid__item-title">Gestalt Principles</h3>
+						<p class="grid__item-description">These are a set of principles that were established in the early twentieth century by the Gestalt psychologists. They capture how humans make sense of images. Gestalt principles explain how humans simplify and organize complex images that consist of many elements, by subconsciously arranging the parts into an organized system that creates a whole, rather than interpreting them as a series of disparate elements. In other words, Gestalt principles capture our tendency to perceive the whole as opposed to the individual elements.</p>
+					</div>
+				</div>
+			</div>
+			<footer class="frame">
+				<div class="frame__links">
+					<a href="https://tympanus.net/Development/AudioBasedImageDistortion/">Previous Demo</a>
+					<a href="https://tympanus.net/codrops/?p=47831">Article</a>
+					<a href="https://github.com/codrops/AnimateSVGTextPath/">GitHub</a>
+				</div>
+			</footer>
+		</main>
+		<!--script src="https://tympanus.net/codrops/adpacks/demoad.js"></script-->
+		<script src="js/index.js"></script>
+	</body>
+</html>
